@@ -4,7 +4,6 @@ import br.com.movieflix.Entity.Category;
 import br.com.movieflix.Repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 import java.util.Optional;
