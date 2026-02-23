@@ -10,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,12 +40,34 @@ public class MovieController {
         return movieService.findById(id)
                 .map(movie -> ResponseEntity.ok(MovieMapper.toMovieResponse(movie)))
                 .orElse(ResponseEntity.notFound().build());
-
     }
+
+
+    @PutMapping("{id}")
+    public ResponseEntity<MovieResponse> update(@PathVariable Long id,  @RequestBody MovieRequest request) {
+        return movieService.update(id, MovieMapper.toMovie(request))
+                .map(movie -> ResponseEntity.ok(MovieMapper.toMovieResponse(movie)))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteByMovieId(@PathVariable Long id) {
-        movieService.deleteById(id);
-        return  ResponseEntity.noContent().build();
+        Optional<Movie> optionalMovie = movieService.findById(id);
+        if(optionalMovie.isPresent()) {
+            movieService.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+
+    @GetMapping("/search")
+    public ResponseEntity<List<MovieResponse>> findByCategory(@RequestParam Long category) {
+       return ResponseEntity.ok(movieService.findByCategory(category)
+               .stream()
+               .map(MovieMapper::toMovieResponse)
+               .toList());
     }
 
 }
